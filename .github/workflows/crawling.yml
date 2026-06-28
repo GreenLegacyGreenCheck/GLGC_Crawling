@@ -1,0 +1,30 @@
+name: Auto Crawling to Nest.js
+
+on:
+  schedule:
+    # 매일 새벽 2시에 실행
+    - cron: '0 17 * * *' 
+  workflow_dispatch: # 수동으로 원할 때 버튼 눌러서 실행
+
+jobs:
+  run-crawler:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+        
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+          
+      - name: Install Requirements
+        run: |
+          pip install -r requirements.txt
+          
+      - name: Run Crawling Script
+        env:
+          # 이후 백엔드 주소 Settings > Secrets에 BACKEND_URL 등록 예정
+          BACKEND_URL: ${{ secrets.BACKEND_URL }}
+        run: |
+          python crawling.py
